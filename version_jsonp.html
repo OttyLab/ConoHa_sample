@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script>
+var url = "https://identity.tyo1.conoha.io/v2.0?callback=?";
+var type = "GET";
+
+var access = function() {
+		$.ajax({
+			url: url,
+			type: type,
+			dataType: 'jsonp',
+			success: function(data) {
+				$('#output').text(JSON.stringify(data));
+			},
+			error: function() {
+				console.log('$.ajax error');
+			}
+		});
+}
+
+$(function(){
+	access();	
+});
+</script>
+
+</head>
+<body>
+<h2>ConoHa API sample</h2>
+<div id="output"></div>
+</body>
+</html>

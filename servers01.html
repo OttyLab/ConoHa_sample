@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+
+<script>
+//
+// Access information
+//
+var user_id = "";
+var password = "";
+var tenant_id = "";
+
+//
+// token API information
+//
+var token_url = "https://identity.tyo1.conoha.io/v2.0/tokens";
+var token_data = {
+	"auth": {
+		"passwordCredentials": {
+			"username": user_id,
+			"password": password,
+	},
+	"tenantId": tenant_id
+	}
+};
+var token_type = "POST";
+var tokenOnSuccess = function(data) {
+	$('#output').text(JSON.stringify(data));
+	window.localStorage['token'] = data.access.token.id;
+}
+
+//
+// servers API information
+//
+var servers_url = "https://compute.tyo1.conoha.io/v2/" + tenant_id + "/servers";
+var servers_data = {};
+var servers_type = "GET";
+var serversOnSuccess = function(data) {
+	$('#output').text(JSON.stringify(data));
+}
+
+//
+// JSON access
+//
+var access = function(url, data, type, onSuccess) {
+		$.ajax({
+			url: url,
+			data: JSON.stringify(data),
+			type: type,
+			headers: {
+				'X-Auth-Token' : window.localStorage['token']
+			},
+			success: onSuccess,
+			error: function() {
+				console.log('$.ajax error');
+			}
+		});
+}
+
+//
+// Run on load
+//
+$(function(){
+	if (window.localStorage['token'] === undefined) {
+		access(token_url, token_data, token_type, tokenOnSuccess);
+	} else {
+		access(servers_url, servers_data, servers_type, serversOnSuccess);	
+	}
+});
+</script>
+</head>
+<body>
+<h2>ConoHa API sample</h2>
+<div id="output"></div>
+</body>
+</html>
